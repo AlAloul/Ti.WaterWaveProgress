@@ -27,12 +27,10 @@ import android.widget.LinearLayout.LayoutParams;
 import android.app.Activity;
 import cn.modificator.waterwave_progress.*;
 
-// This proxy can be created by calling Waterwaveprogress.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = WaterwaveprogressModule.class)
 public class ViewProxy extends TiViewProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "WaWaView";
-
 	WaterWaveProgress view;
 
 	private class WWPView extends TiUIView {
@@ -44,7 +42,6 @@ public class ViewProxy extends TiViewProxy {
 			container.setLayoutParams(lp);
 			view = new WaterWaveProgress(TiApplication.getInstance()
 					.getApplicationContext());
-
 			container.addView(view);
 			setNativeView(container);
 		}
@@ -112,6 +109,43 @@ public class ViewProxy extends TiViewProxy {
 		if (options.containsKeyAndNotNull("crestCount")) {
 			view.setCrestCount(TiConvert.toFloat(options, "crestCount"));
 		}
+		if (options.containsKeyAndNotNull("amplitude")) {
+			view.setAmplitude(TiConvert.toFloat(options, "amplitude"));
+		}
+		if (options.containsKeyAndNotNull("α")) {
+			view.setWaterAlpha(TiConvert.toFloat(options, "α"));
+		}
+	
+	}
+
+	@Kroll.method
+	public void hideNumerical() {
+		view.setShowNumerical(false);
+	}
+
+	@Kroll.method
+	public void showNumerical() {
+		view.setShowNumerical(true);
+	}
+
+	@Kroll.method
+	public void setShowRingVisibility(boolean arg) {
+		view.setShowRing(arg);
+	}
+
+	@Kroll.method
+	public void hideRing() {
+		view.setShowRing(false);
+	}
+
+	@Kroll.method
+	public void showRing() {
+		view.setShowRing(true);
+	}
+
+	@Kroll.method
+	public void setCrestCount(int crestCount) {
+		view.setCrestCount(crestCount);
 	}
 
 	@Kroll.method

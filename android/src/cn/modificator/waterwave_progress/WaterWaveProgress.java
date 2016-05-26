@@ -17,8 +17,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -79,28 +77,14 @@ public class WaterWaveProgress extends View {
 			}
 		}
 	}
-
+	/* CONSTRUCTOR*/
 	public WaterWaveProgress(Context paramContext) {
 		super(paramContext);
-		init(paramContext);
+		initView(paramContext);
 	}
 
-	private void init(Context context) {
+	private void initView(Context context) {
 		mCenterPoint = new Point();
-		/*
-		 * 
-		mRingColor = attrInit.getProgressColor();
-		mRingBgColor = attrInit.getProgressBgColor();
-		mWaterColor = attrInit.getWaterWaveColor();
-		mWaterBgColor = attrInit.getWaterWaveBgColor();
-		mRingWidth = attrInit.getProgressWidth();
-		mProgress2WaterWidth = attrInit.getProgress2WaterWidth();
-		mShowProgress = attrInit.isShowProgress();
-		mShowNumerical = attrInit.isShowNumerical();
-		mFontSize = attrInit.getFontSize();
-		mTextColor = attrInit.getTextColor();
-		mProgress = attrInit.getProgress();
-		mMaxProgress = attrInit.getMaxProgress();*/
 
 		// 如果手机版本在4.0以上,则开启硬件加速
 		if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH) {
