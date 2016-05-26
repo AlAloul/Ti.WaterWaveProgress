@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 0.0.1
+apiversion: 2
+architectures: armeabi armeabi-v7a x86
+description: waterwaveprogress
+author: Rainer Schleevoigt
+license: Specify your license
+copyright: Copyright (c) 2016 by 
+
+# these should not be edited
+name: WaterWaveProgress
+moduleid: de.appwerft.waterwaveprogress
+guid: 79e04b3b-6b2a-414b-8314-6973a931d6ee
+platform: android
+minsdk: 5.2.0.GENPERM
