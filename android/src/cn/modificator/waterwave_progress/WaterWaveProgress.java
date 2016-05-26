@@ -20,12 +20,15 @@ import android.os.Build.VERSION_CODES;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ProgressBar;
+import org.appcelerator.kroll.common.Log;
 
 /**
  * @author Administrator
  * 
  */
 public class WaterWaveProgress extends View {
+
+	private static final String LCAT = "WaterView";
 	// 水的画笔 // 画圆环的画笔// 进度百分比的画笔
 	private Paint mPaintWater = null, mRingPaint = null, mTextPaint = null;
 
@@ -41,7 +44,7 @@ public class WaterWaveProgress extends View {
 	// 画布中心点
 	private Point mCenterPoint;
 	// 圆环宽度
-	private float mRingWidth, mProgress2WaterWidth;
+	private float mRingWidth, mRing2WaterWidth;
 	// 是否显示进度条 //是否显示进度百分比
 	private boolean mShowProgress = false, mShowNumerical = true;
 
@@ -78,9 +81,9 @@ public class WaterWaveProgress extends View {
 	}
 
 	/* CONSTRUCTOR */
-	public WaterWaveProgress(Context paramContext) {
-		super(paramContext);
-		initView(paramContext);
+	public WaterWaveProgress(Context context) {
+		super(context);
+		initView(context);
 	}
 
 	private void initView(Context context) {
@@ -110,6 +113,8 @@ public class WaterWaveProgress extends View {
 		mTextPaint.setTextSize(mFontSize);
 
 		mHandler = new MyHandler(this);
+		
+		Log.d(LCAT, "Progress: " + mProgress + " / " + mMaxProgress);
 
 	}
 
@@ -134,8 +139,8 @@ public class WaterWaveProgress extends View {
 		mCenterPoint.y = height / 2;
 		{ // 重新设置进度条的宽度和水波与进度条的距离,,至于为什么写在这,我脑袋抽了可以不
 			mRingWidth = mRingWidth == 0 ? width / 20 : mRingWidth;
-			mProgress2WaterWidth = mProgress2WaterWidth == 0 ? mRingWidth * 0.6f
-					: mProgress2WaterWidth;
+			mRing2WaterWidth = mRing2WaterWidth == 0 ? mRingWidth * 0.6f
+					: mRing2WaterWidth;
 			mRingPaint.setStrokeWidth(mRingWidth);
 			mTextPaint.setTextSize(mFontSize == 0 ? width / 5 : mFontSize);
 			if (VERSION.SDK_INT == VERSION_CODES.JELLY_BEAN) {
@@ -157,19 +162,19 @@ public class WaterWaveProgress extends View {
 			mRingPaint.setColor(mRingColor);
 			canvas.drawArc(oval, -90, 90, false, mRingPaint);
 			canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, mCenterPoint.x
-					- mRingWidth - mProgress2WaterWidth, mPaintWater);
+					- mRingWidth - mRing2WaterWidth, mPaintWater);
 			return;
 		}
 
 		// 如果没有执行波浪动画，或者也没有指定容器宽高，就画个简单的矩形
 		if ((width == 0) || (height == 0) || isInEditMode()) {
 			canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, width / 2
-					- mProgress2WaterWidth - mRingWidth, mPaintWater);
+					- mRing2WaterWidth - mRingWidth, mPaintWater);
 			return;
 		}
 
 		// 水与边框的距离
-		float waterPadding = mShowProgress ? mRingWidth + mProgress2WaterWidth
+		float waterPadding = mShowProgress ? mRingWidth + mRing2WaterWidth
 				: 0;
 		// 水最高处
 		int waterHeightCount = mShowProgress ? (int) (height - waterPadding * 2)
@@ -263,154 +268,85 @@ public class WaterWaveProgress extends View {
 		setMeasuredDimension(width, height);
 	}
 
-	/**
-	 * 设置波浪的振幅
-	 */
 	public void setAmplitude(float amplitude) {
+		Log.d(LCAT, "setAmplitude");
 		mAmplitude = amplitude;
 	}
 
-	/**
-	 * 设置水的透明度
-	 * 
-	 * @param alpha
-	 *            透明的百分比，值为0到1之间的小数，越接近0越透明
-	 */
 	public void setWaterAlpha(float alpha) {
 		mWaterAlpha = (int) (255.0F * alpha);
 		mPaintWater.setAlpha(mWaterAlpha);
 	}
 
-	/**
-	 * 设置当前进度
-	 */
+	
 	public void setProgress(int progress) {
 		progress = progress > 100 ? 100 : progress < 0 ? 0 : progress;
 		mProgress = progress;
 		invalidate();
 	}
 
-	/** 获取进度 动画时会用到 */
 	public int getProgress() {
 		return mProgress;
 	}
 
-	/**
-	 * 设置波浪速度
-	 */
 	public void setWaveSpeed(float speed) {
 		mWaveSpeed = speed;
 	}
 
-	/**
-	 * 是否显示进度条
-	 * 
-	 * @param boolean
-	 */
 	public void setShowRing(boolean b) {
 		mShowProgress = b;
 	}
 
-	/**
-	 * 是否显示进度值
-	 * 
-	 * @param boolean
-	 */
 	public void setShowNumerical(boolean b) {
 		mShowNumerical = b;
 	}
 
-	/**
-	 * 设置进度条前景色
-	 * 
-	 * @param mRingColor
-	 */
 	public void setRingColor(int mRingColor) {
 		this.mRingColor = mRingColor;
 	}
 
-	/**
-	 * 设置进度条背景色
-	 * 
-	 * @param mRingBgColor
-	 */
 	public void setRingBgColor(int mRingBgColor) {
 		this.mRingBgColor = mRingBgColor;
 	}
 
-	/**
-	 * 设置水波颜色
-	 * 
-	 * @param mWaterColor
-	 */
 	public void setWaterColor(int mWaterColor) {
 		this.mWaterColor = mWaterColor;
 	}
 
-	/**
-	 * 设置水波背景色
-	 * 
-	 * @param mWaterBgColor
-	 */
 	public void setWaterBgColor(int mWaterBgColor) {
 		this.mWaterBgColor = mWaterBgColor;
 	}
 
-	/**
-	 * 设置进度值显示字体大小
-	 * 
-	 * @param mFontSize
-	 */
 	public void setFontSize(int mFontSize) {
 		this.mFontSize = mFontSize;
 	}
 
-	/**
-	 * 设置进度值显示字体颜色
-	 * 
-	 * @param mTextColor
-	 */
 	public void setTextColor(int mTextColor) {
 		this.mTextColor = mTextColor;
 	}
 
-	/**
-	 * 设置进度条最大值
-	 * 
-	 * @param mMaxProgress
-	 */
 	public void setMaxProgress(int mMaxProgress) {
 		this.mMaxProgress = mMaxProgress;
 	}
 
-	/**
-	 * 设置浪峰个数
-	 * 
-	 * @param crestCount
-	 */
 	public void setCrestCount(float crestCount) {
 		this.crestCount = crestCount;
 	}
 
-	/**
-	 * 设置水波到进度条之间的距离
-	 * 
-	 * @param mProgress2WaterWidth
-	 */
-	public void setRing2WaterWidth(float mProgress2WaterWidth) {
-		this.mProgress2WaterWidth = mProgress2WaterWidth;
+	public void setRing2WaterWidth(float arg) {
+		this.mRing2WaterWidth = arg;
 	}
 
 	public void setRingWidth(float width) {
 		this.mRingWidth = width;
 	}
-	
-	
+
 	public void setIsWaving(boolean arg) {
 		this.isWaving = arg;
 	}
+
 	public void setWaveFactor(long arg) {
 		this.mWaveFactor = arg;
 	}
-	
+
 }

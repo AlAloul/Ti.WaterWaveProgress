@@ -21,14 +21,14 @@ import android.widget.LinearLayout.LayoutParams;
 import android.app.Activity;
 import cn.modificator.waterwave_progress.*;
 
-
-
 @Kroll.proxy(creatableInModule = WaterwaveprogressModule.class)
 public class ViewProxy extends TiViewProxy {
 	// Standard Debugging variables
+	TiApplication appContext;
+	Activity activity;
 	private static final String LCAT = "WaWaView";
 
-	WaterWaveProgress mWaterWaveProgress;
+	WaterWaveProgress mWaterWaveProgressView;
 	private int mRingColor, mRingBgColor, mWaterColor, mWaterBgColor,
 			mFontSize, mTextColor;
 	float mCrestCount = 1.5f;
@@ -42,49 +42,11 @@ public class ViewProxy extends TiViewProxy {
 	private float mWaveSpeed = 0.070F; // 0.020F
 	private int mWaterAlpha = 255; // 255
 
-	private class progressView extends TiUIView {
-		WaterWaveProgress mWaterWaveProgress;
-		public progressView(TiViewProxy proxy) {
-			super(proxy);
-			LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
-					LayoutParams.WRAP_CONTENT);
-			LinearLayout container = new LinearLayout(proxy.getActivity());
-			container.setLayoutParams(lp);
-			
-			mWaterWaveProgress = new WaterWaveProgress(TiApplication.getInstance()
-					.getApplicationContext());
-			mWaterWaveProgress.setAmplitude(mAmplitude);
-			mWaterWaveProgress.setCrestCount(mCrestCount);
-			mWaterWaveProgress.setFontSize(mFontSize);
-			mWaterWaveProgress.setIsWaving(mIsWaving);
-			mWaterWaveProgress.setProgress(mProgress);
-			mWaterWaveProgress.setRingWidth(mRingWidth);
-			mWaterWaveProgress.setShowRing(mShowRing);
-			mWaterWaveProgress.setShowNumerical(mShowNumerical);
-			mWaterWaveProgress.setWaterColor(mWaterColor);
-			mWaterWaveProgress.setWaterBgColor(mWaterBgColor);
-			mWaterWaveProgress.setRingColor(mRingColor);
-			mWaterWaveProgress.setRingBgColor(mRingBgColor);
-			mWaterWaveProgress.setTextColor(mTextColor);
-			mWaterWaveProgress.setRingWidth(mRingWidth);
-			mWaterWaveProgress.setRing2WaterWidth(mRing2WaterWidth);
-			
-			mWaterWaveProgress.setWaveFactor(mWaveFactor);
-			mWaterWaveProgress.setWaveSpeed(mWaveSpeed);
-			mWaterWaveProgress.setWaterAlpha(mWaterAlpha);
-			container.addView(mWaterWaveProgress);
-			setNativeView(container);
-		}
-
-		@Override
-		public void processProperties(KrollDict d) {
-			super.processProperties(d);
-		}
-	}
-
 	// Constructor
 	public ViewProxy() {
 		super();
+		appContext = TiApplication.getInstance();
+		activity = appContext.getCurrentActivity();
 	}
 
 	@Override
@@ -94,12 +56,11 @@ public class ViewProxy extends TiViewProxy {
 		mView.getLayoutParams().autoFillsWidth = true;
 		return mView;
 	}
-
-	// Handle creation options
-	// copy from interace to proxy vars
+	
 	@Override
 	public void handleCreationDict(KrollDict options) {
 		super.handleCreationDict(options);
+		Log.d(LCAT,"start ViewProxy::handleCreationDict");
 		if (options.containsKeyAndNotNull("progress")) {
 			mProgress = TiConvert.toInt(options, "progress");
 		}
@@ -148,67 +109,111 @@ public class ViewProxy extends TiViewProxy {
 		if (options.containsKeyAndNotNull("waveFactor")) {
 			mWaveFactor = TiConvert.toInt(options, "waveFactor");
 		}
-
+		Log.d(LCAT, "ViewProxy::handleCreationDict finished ");
 	}
 
+	
 	@Kroll.method
 	public void hideNumerical() {
-		mWaterWaveProgress.setShowNumerical(false);
+		mWaterWaveProgressView.setShowNumerical(false);
 	}
 
 	@Kroll.method
 	public void showNumerical() {
-		mWaterWaveProgress.setShowNumerical(true);
+		mWaterWaveProgressView.setShowNumerical(true);
 	}
 
-	@Kroll.method
-	public void setShowRingVisibility(boolean arg) {
-		mWaterWaveProgress.setShowRing(arg);
-	}
+	
 
 	@Kroll.method
 	public void hideRing() {
-		mWaterWaveProgress.setShowRing(false);
+		mWaterWaveProgressView.setShowRing(false);
 	}
 
 	@Kroll.method
 	public void showRing() {
-		mWaterWaveProgress.setShowRing(true);
+		mWaterWaveProgressView.setShowRing(true);
 	}
 
 	@Kroll.method
-	public void setCrestCount(int crestCount) {
-		mWaterWaveProgress.setCrestCount(crestCount);
+	public void setCrestCount(int arg) {
+		mWaterWaveProgressView.setCrestCount(TiConvert.toInt(arg));
 	}
 
 	@Kroll.method
 	public void setProgress(int arg) {
 		Log.d(LCAT, "mProgress=" + arg);
-		mWaterWaveProgress.setProgress(arg);
+		mWaterWaveProgressView.setProgress(TiConvert.toInt(arg));
 	}
 
 	@Kroll.method
-	public void setRingWidth(float width) {
-		mWaterWaveProgress.setRingWidth(width);
+	public void setRingWidth(float arg) {
+		mWaterWaveProgressView.setRingWidth(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
-	public void setCrestCount(float crestCount) {
-		mWaterWaveProgress.setCrestCount(crestCount);
+	public void setCrestCount(float arg) {
+		mWaterWaveProgressView.setCrestCount(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
-	public void setAmplitude(float amp) {
-		mWaterWaveProgress.setAmplitude(amp);
+	public void setAmplitude(float arg) {
+		mWaterWaveProgressView.setAmplitude(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
 	public void setWaveSpeed(float arg) {
-		mWaterWaveProgress.setWaveSpeed(arg);
+		mWaterWaveProgressView.setWaveSpeed(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
 	public void setWaterAlpha(float arg) {
-		mWaterWaveProgress.setWaterAlpha(arg);
+		mWaterWaveProgressView.setWaterAlpha(TiConvert.toFloat(arg));
+	}
+
+	private class progressView extends TiUIView {
+		public progressView(final TiViewProxy proxy) {
+			super(proxy);
+			Log.d(LCAT,"progressView started");
+			LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
+					LayoutParams.WRAP_CONTENT);
+			LinearLayout container = new LinearLayout(proxy.getActivity());
+			container.setLayoutParams(lp);
+
+			mWaterWaveProgressView = new WaterWaveProgress(TiApplication
+					.getInstance().getApplicationContext());
+			Log.d(LCAT,"progressView:: new WaterWaveProgress");
+			Log.d(LCAT, "mWaterWaveProgressView created");
+			mWaterWaveProgressView.setAmplitude(mAmplitude);
+			mWaterWaveProgressView.setCrestCount(mCrestCount);
+			mWaterWaveProgressView.setFontSize(mFontSize);
+			mWaterWaveProgressView.setIsWaving(mIsWaving);
+			mWaterWaveProgressView.setProgress(mProgress);
+			mWaterWaveProgressView.setMaxProgress(mMaxProgress);
+			mWaterWaveProgressView.setRingWidth(mRingWidth);
+			mWaterWaveProgressView.setShowRing(mShowRing);
+			mWaterWaveProgressView.setShowNumerical(mShowNumerical);
+			mWaterWaveProgressView.setWaterColor(mWaterColor);
+			mWaterWaveProgressView.setWaterBgColor(mWaterBgColor);
+			mWaterWaveProgressView.setRingColor(mRingColor);
+			mWaterWaveProgressView.setRingBgColor(mRingBgColor);
+			mWaterWaveProgressView.setTextColor(mTextColor);
+			mWaterWaveProgressView.setRingWidth(mRingWidth);
+			mWaterWaveProgressView.setRing2WaterWidth(mRing2WaterWidth);
+			mWaterWaveProgressView.setWaveFactor(mWaveFactor);
+			mWaterWaveProgressView.setWaveSpeed(mWaveSpeed);
+			mWaterWaveProgressView.setWaterAlpha(mWaterAlpha);
+			Log.d(LCAT, "mWaterWaveProgressView: all constructor properties set");
+			Log.d(LCAT, "Progress: " + mProgress + " / " + mMaxProgress);
+			
+			container.addView(mWaterWaveProgressView);
+			setNativeView(container);
+		}
+
+		@Override
+		public void processProperties(KrollDict d) {
+			Log.d(LCAT, "processProperties triggered");
+			super.processProperties(d);
+		}
 	}
 }
