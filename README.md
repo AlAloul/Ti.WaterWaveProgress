@@ -19,19 +19,20 @@ var progressView = require('ti.appwerft.waterwaveprogress').createView({
     fontSize : 22,
     showRing : true,
     showNumerical : true,
-    crestCount :2.2
-    amplitude : 0.4
+    crestCount : 2.2,
+    amplitude : 0.4,
     α : 0.7
 });
 
 
 var setprogressFn = function() {
-    if (progress>100) return;
-    progressView.setProgress(progress);
-    progress++;
-    setTimeout(setProgressFn,20);
-    
-}
+    if (progress<100 && progressView) {
+        progressView.setProgress(progress);
+        progress++;
+        setTimeout(setProgressFn,20);
+    }
+};
+
 setprogressFn();
 ~~~
 

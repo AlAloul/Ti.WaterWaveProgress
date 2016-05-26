@@ -34,8 +34,8 @@ public class WaterWaveProgress extends View {
 	private int mRingColor, mRingBgColor, mWaterColor, mWaterBgColor,
 			mFontSize, mTextColor;
 	// 进度 //浪峰个数
-	float  crestCount = 1.5f;
-	
+	float crestCount = 1.5f;
+
 	int mProgress = 10, mMaxProgress = 100;
 
 	// 画布中心点
@@ -55,7 +55,6 @@ public class WaterWaveProgress extends View {
 	private float mWaveSpeed = 0.070F; // 0.020F
 	/** 水的透明度 */
 	private int mWaterAlpha = 255; // 255
-	
 
 	private MyHandler mHandler = null;
 
@@ -77,7 +76,8 @@ public class WaterWaveProgress extends View {
 			}
 		}
 	}
-	/* CONSTRUCTOR*/
+
+	/* CONSTRUCTOR */
 	public WaterWaveProgress(Context paramContext) {
 		super(paramContext);
 		initView(paramContext);
@@ -138,9 +138,9 @@ public class WaterWaveProgress extends View {
 					: mProgress2WaterWidth;
 			mRingPaint.setStrokeWidth(mRingWidth);
 			mTextPaint.setTextSize(mFontSize == 0 ? width / 5 : mFontSize);
-			if (VERSION.SDK_INT==VERSION_CODES.JELLY_BEAN) {
+			if (VERSION.SDK_INT == VERSION_CODES.JELLY_BEAN) {
 				setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-			}else {
+			} else {
 				setLayerType(View.LAYER_TYPE_HARDWARE, null);
 			}
 		}
@@ -189,12 +189,12 @@ public class WaterWaveProgress extends View {
 				+ waterPadding - mRingWidth / 2, mRingPaint);
 		mRingPaint.setColor(mRingColor);
 		// 100为 总进度
-		canvas.drawArc(oval, -90, (mProgress*1f) / mMaxProgress * 360f, false,
-				mRingPaint);
+		canvas.drawArc(oval, -90, (mProgress * 1f) / mMaxProgress * 360f,
+				false, mRingPaint);
 
 		// 计算出水的高度
-		float waterHeight = waterHeightCount * (1 - (mProgress*1f) / mMaxProgress)
-				+ waterPadding;
+		float waterHeight = waterHeightCount
+				* (1 - (mProgress * 1f) / mMaxProgress) + waterPadding;
 		int staticHeight = (int) (waterHeight + mAmplitude);
 		Path mPath = new Path();
 		mPath.reset();
@@ -245,8 +245,8 @@ public class WaterWaveProgress extends View {
 			waveHeight = newWaveHeight;
 		}
 		if (mShowNumerical) {
-			String progressTxt = String.format("%.0f", (mProgress*1f) / mMaxProgress
-					* 100f)
+			String progressTxt = String.format("%.0f", (mProgress * 1f)
+					/ mMaxProgress * 100f)
 					+ "%";
 			float mTxtWidth = mTextPaint.measureText(progressTxt, 0,
 					progressTxt.length());
@@ -392,7 +392,6 @@ public class WaterWaveProgress extends View {
 		this.crestCount = crestCount;
 	}
 
-	
 	/**
 	 * 设置水波到进度条之间的距离
 	 * 
@@ -401,8 +400,17 @@ public class WaterWaveProgress extends View {
 	public void setRing2WaterWidth(float mProgress2WaterWidth) {
 		this.mProgress2WaterWidth = mProgress2WaterWidth;
 	}
-	
+
 	public void setRingWidth(float width) {
 		this.mRingWidth = width;
 	}
+	
+	
+	public void setIsWaving(boolean arg) {
+		this.isWaving = arg;
+	}
+	public void setWaveFactor(long arg) {
+		this.mWaveFactor = arg;
+	}
+	
 }

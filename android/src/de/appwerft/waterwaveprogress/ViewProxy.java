@@ -9,19 +9,13 @@
 package de.appwerft.waterwaveprogress;
 
 import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.titanium.TiC;
-import org.appcelerator.titanium.util.Log;
-import org.appcelerator.titanium.util.TiConfig;
+import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.util.TiConvert;
 import org.appcelerator.titanium.proxy.TiViewProxy;
-import org.appcelerator.titanium.view.TiCompositeLayout;
-import org.appcelerator.titanium.view.TiCompositeLayout.LayoutArrangement;
 import org.appcelerator.titanium.view.TiUIView;
 import org.appcelerator.titanium.TiApplication;
 
-import android.graphics.Color;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.app.Activity;
@@ -31,7 +25,20 @@ import cn.modificator.waterwave_progress.*;
 public class ViewProxy extends TiViewProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "WaWaView";
+
 	WaterWaveProgress view;
+	private int mRingColor, mRingBgColor, mWaterColor, mWaterBgColor,
+			mFontSize, mTextColor;
+	float mCrestCount = 1.5f;
+	int mProgress = 10, mMaxProgress = 100;
+	private float mRingWidth, mRing2WaterWidth;
+	private boolean mShowNumerical = true, mShowRing = true;
+
+	private int mWaveFactor = 0;
+	private boolean mIsWaving = false;
+	private float mAmplitude = 30.0F; // 20F
+	private float mWaveSpeed = 0.070F; // 0.020F
+	private int mWaterAlpha = 255; // 255
 
 	private class WWPView extends TiUIView {
 		public WWPView(TiViewProxy proxy) {
@@ -42,6 +49,26 @@ public class ViewProxy extends TiViewProxy {
 			container.setLayoutParams(lp);
 			view = new WaterWaveProgress(TiApplication.getInstance()
 					.getApplicationContext());
+			view.setShowRing(mShowRing);
+			view.setShowNumerical(mShowNumerical);
+
+			view.setCrestCount(mCrestCount);
+			view.setProgress(mProgress);
+			view.setRingWidth(mRingWidth);
+			view.setCrestCount(mCrestCount);
+			view.setAmplitude(mAmplitude);
+			view.setWaterColor(mWaterColor);
+			view.setWaterBgColor(mWaterBgColor);
+			view.setRingColor(mRingColor);
+			view.setRingBgColor(mRingBgColor);
+			view.setFontSize(mFontSize);
+			view.setTextColor(mTextColor);
+			view.setRingWidth(mRingWidth);
+			view.setRing2WaterWidth(mRing2WaterWidth);
+			view.setIsWaving(mIsWaving);
+			view.setWaveFactor(mWaveFactor);
+			view.setWaveSpeed(mWaveSpeed);
+			view.setWaterAlpha(mWaterAlpha);
 			container.addView(view);
 			setNativeView(container);
 		}
@@ -62,6 +89,7 @@ public class ViewProxy extends TiViewProxy {
 		TiUIView view = new WWPView(this);
 		view.getLayoutParams().autoFillsHeight = true;
 		view.getLayoutParams().autoFillsWidth = true;
+
 		return view;
 	}
 
@@ -70,52 +98,54 @@ public class ViewProxy extends TiViewProxy {
 	public void handleCreationDict(KrollDict options) {
 		super.handleCreationDict(options);
 		if (options.containsKeyAndNotNull("progress")) {
-			view.setProgress(TiConvert.toInt(options, "progress"));
+			mProgress = TiConvert.toInt(options, "progress");
 		}
 		if (options.containsKeyAndNotNull("maxProgress")) {
-			view.setMaxProgress(TiConvert.toInt(options, "maxProgress"));
+			mMaxProgress = TiConvert.toInt(options, "maxProgress");
 		}
 		if (options.containsKeyAndNotNull("ringWidth")) {
-			view.setRingWidth(TiConvert.toFloat(options, "ringWidth"));
+			mRingWidth = TiConvert.toFloat(options, "ringWidth");
 		}
 		if (options.containsKeyAndNotNull("fontSize")) {
-			view.setFontSize(TiConvert.toInt(options, "fontSize"));
+			mFontSize = TiConvert.toInt(options, "fontSize");
 		}
 		if (options.containsKeyAndNotNull("ring2WaterWidth")) {
-			view.setRing2WaterWidth(TiConvert.toFloat(options,
-					"ring2WaterWidth"));
+			mRing2WaterWidth = TiConvert.toFloat(options, "ring2WaterWidth");
 		}
 		if (options.containsKeyAndNotNull("ringColor")) {
-			view.setRingColor(TiConvert.toColor(options, "ringColor"));
+			mRingColor = TiConvert.toColor(options, "ringColor");
 		}
 		if (options.containsKeyAndNotNull("ringBgColor")) {
-			view.setRingBgColor(TiConvert.toColor(options, "ringBgColor"));
+			mRingBgColor = TiConvert.toColor(options, "ringBgColor");
 		}
 		if (options.containsKeyAndNotNull("waterColor")) {
-			view.setWaterColor(TiConvert.toColor(options, "waterColor"));
+			mWaterColor = TiConvert.toColor(options, "waterColor");
 		}
 		if (options.containsKeyAndNotNull("waterBgColor")) {
-			view.setWaterBgColor(TiConvert.toColor(options, "waterBgColor"));
+			mWaterBgColor = TiConvert.toColor(options, "waterBgColor");
 		}
 		if (options.containsKeyAndNotNull("textColor")) {
-			view.setTextColor(TiConvert.toColor(options, "textColor"));
+			mTextColor = TiConvert.toColor(options, "textColor");
 		}
 		if (options.containsKeyAndNotNull("showNumerical")) {
-			view.setShowNumerical(TiConvert.toBoolean(options, "showNumerical"));
+			mShowNumerical = TiConvert.toBoolean(options, "showNumerical");
 		}
 		if (options.containsKeyAndNotNull("showRing")) {
-			view.setShowRing(TiConvert.toBoolean(options, "showRing"));
+			mShowRing = TiConvert.toBoolean(options, "showRing");
 		}
 		if (options.containsKeyAndNotNull("crestCount")) {
-			view.setCrestCount(TiConvert.toFloat(options, "crestCount"));
+			mCrestCount = TiConvert.toFloat(options, "crestCount");
 		}
 		if (options.containsKeyAndNotNull("amplitude")) {
-			view.setAmplitude(TiConvert.toFloat(options, "amplitude"));
+			mAmplitude = TiConvert.toFloat(options, "amplitude");
 		}
 		if (options.containsKeyAndNotNull("α")) {
-			view.setWaterAlpha(TiConvert.toFloat(options, "α"));
+			mWaterAlpha = TiConvert.toInt(options, "α");
 		}
-	
+		if (options.containsKeyAndNotNull("waveFactor")) {
+			mWaveFactor = TiConvert.toInt(options, "waveFactor");
+		}
+
 	}
 
 	@Kroll.method
@@ -150,6 +180,7 @@ public class ViewProxy extends TiViewProxy {
 
 	@Kroll.method
 	public void setProgress(int progress) {
+		Log.d(LCAT, "progress=" + progress);
 		view.setProgress(progress);
 	}
 
@@ -162,10 +193,19 @@ public class ViewProxy extends TiViewProxy {
 	public void setCrestCount(float crestCount) {
 		view.setCrestCount(crestCount);
 	}
-
 	@Kroll.method
 	public void setAmplitude(float amp) {
 		view.setAmplitude(amp);
+	}
+
+	@Kroll.method
+	public void setWaveSpeed(float arg) {
+		view.setWaveSpeed(arg);
+	}
+
+	@Kroll.method
+	public void setWaterAlpha(float arg) {
+		view.setWaterAlpha(arg);
 	}
 
 }
