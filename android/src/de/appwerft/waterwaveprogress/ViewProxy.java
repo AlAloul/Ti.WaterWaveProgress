@@ -33,19 +33,6 @@ public class ViewProxy extends TiViewProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "WaWaView";
 
-	float progressWidth;
-	float fontSize;
-	int progressColor;
-	int progressBgColor;
-	int waterWaveColor;
-	int waterWaveBgColor;
-	float progress2WaterWidth;
-	boolean showProgress;
-	boolean showNumerical;
-	int textColor;
-	int progress;
-	int maxProgress;
-
 	WaterWaveProgress view;
 
 	private class WWPView extends TiUIView {
@@ -57,6 +44,7 @@ public class ViewProxy extends TiViewProxy {
 			container.setLayoutParams(lp);
 			view = new WaterWaveProgress(TiApplication.getInstance()
 					.getApplicationContext());
+
 			container.addView(view);
 			setNativeView(container);
 		}
@@ -85,41 +73,44 @@ public class ViewProxy extends TiViewProxy {
 	public void handleCreationDict(KrollDict options) {
 		super.handleCreationDict(options);
 		if (options.containsKeyAndNotNull("progress")) {
-			progress = TiConvert.toInt(options, "progress");
+			view.setProgress(TiConvert.toInt(options, "progress"));
 		}
 		if (options.containsKeyAndNotNull("maxProgress")) {
-			maxProgress = TiConvert.toInt(options, "maxProgress");
+			view.setMaxProgress(TiConvert.toInt(options, "maxProgress"));
 		}
-		if (options.containsKeyAndNotNull("progressWidth")) {
-			progressWidth = TiConvert.toFloat(options, "progressWidth");
+		if (options.containsKeyAndNotNull("ringWidth")) {
+			view.setRingWidth(TiConvert.toFloat(options, "ringWidth"));
 		}
 		if (options.containsKeyAndNotNull("fontSize")) {
-			fontSize = TiConvert.toFloat(options, "fontSize");
+			view.setFontSize(TiConvert.toInt(options, "fontSize"));
 		}
-		if (options.containsKeyAndNotNull("progress2WaterWidth")) {
-			progress2WaterWidth = TiConvert.toFloat(options,
-					"progress2WaterWidth");
+		if (options.containsKeyAndNotNull("ring2WaterWidth")) {
+			view.setRing2WaterWidth(TiConvert.toFloat(options,
+					"ring2WaterWidth"));
 		}
-		if (options.containsKeyAndNotNull("progressColor")) {
-			progressColor = TiConvert.toColor(options, "progressColor");
+		if (options.containsKeyAndNotNull("ringColor")) {
+			view.setRingColor(TiConvert.toColor(options, "ringColor"));
 		}
-		if (options.containsKeyAndNotNull("progressBgColor")) {
-			progressBgColor = TiConvert.toColor(options, "progressBgColor");
+		if (options.containsKeyAndNotNull("ringBgColor")) {
+			view.setRingBgColor(TiConvert.toColor(options, "ringBgColor"));
 		}
-		if (options.containsKeyAndNotNull("waterWaveColor")) {
-			waterWaveColor = TiConvert.toColor(options, "waterWaveColor");
+		if (options.containsKeyAndNotNull("waterColor")) {
+			view.setWaterColor(TiConvert.toColor(options, "waterColor"));
 		}
-		if (options.containsKeyAndNotNull("waterWaveBgColor")) {
-			waterWaveBgColor = TiConvert.toColor(options, "waterWaveBgColor");
+		if (options.containsKeyAndNotNull("waterBgColor")) {
+			view.setWaterBgColor(TiConvert.toColor(options, "waterBgColor"));
 		}
 		if (options.containsKeyAndNotNull("textColor")) {
-			textColor = TiConvert.toColor(options, "textColor");
+			view.setTextColor(TiConvert.toColor(options, "textColor"));
 		}
 		if (options.containsKeyAndNotNull("showNumerical")) {
-			showNumerical = TiConvert.toBoolean(options, "showNumerical");
+			view.setShowNumerical(TiConvert.toBoolean(options, "showNumerical"));
 		}
-		if (options.containsKeyAndNotNull("showProgress")) {
-			showProgress = TiConvert.toBoolean(options, "showProgress");
+		if (options.containsKeyAndNotNull("showRing")) {
+			view.setShowRing(TiConvert.toBoolean(options, "showRing"));
+		}
+		if (options.containsKeyAndNotNull("crestCount")) {
+			view.setCrestCount(TiConvert.toFloat(options, "crestCount"));
 		}
 	}
 
@@ -127,17 +118,20 @@ public class ViewProxy extends TiViewProxy {
 	public void setProgress(int progress) {
 		view.setProgress(progress);
 	}
+
 	@Kroll.method
 	public void setRingWidth(float width) {
 		view.setRingWidth(width);
 	}
+
 	@Kroll.method
 	public void setCrestCount(float crestCount) {
 		view.setCrestCount(crestCount);
 	}
+
 	@Kroll.method
 	public void setAmplitude(float amp) {
 		view.setAmplitude(amp);
 	}
-	
+
 }

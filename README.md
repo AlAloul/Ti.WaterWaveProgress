@@ -11,10 +11,10 @@ Usage
 ~~~
 var progressView = require('ti.appwerft.waterwaveprogress').createProgressView({
     maxProgress : 100,
-    progressWidth:4,
-    waterWaveColor: '#00ff00',
-    waterWaveBgColor: '#00aa00',
-    progress2WaterWidth : 10,
+    ringWidth:4,
+    waterColor: '#00ff00',
+    waterBgColor: '#00aa00',
+    ring2WaterWidth : 10,
     fontSize : 22
 });
 progressView.setProgress(65);

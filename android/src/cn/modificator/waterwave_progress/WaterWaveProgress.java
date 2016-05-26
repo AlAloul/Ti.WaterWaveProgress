@@ -88,6 +88,7 @@ public class WaterWaveProgress extends View {
 	private void init(Context context) {
 		mCenterPoint = new Point();
 		/*
+		 * 
 		mRingColor = attrInit.getProgressColor();
 		mRingBgColor = attrInit.getProgressBgColor();
 		mWaterColor = attrInit.getWaterWaveColor();
@@ -296,11 +297,6 @@ public class WaterWaveProgress extends View {
 		mPaintWater.setAlpha(mWaterAlpha);
 	}
 
-	/** 设置水的颜色 */
-	public void setWaterColor(int color) {
-		mWaterColor = color;
-	}
-
 	/**
 	 * 设置当前进度
 	 */
@@ -327,7 +323,7 @@ public class WaterWaveProgress extends View {
 	 * 
 	 * @param boolean
 	 */
-	public void setShowProgress(boolean b) {
+	public void setShowRing(boolean b) {
 		mShowProgress = b;
 	}
 
@@ -345,7 +341,7 @@ public class WaterWaveProgress extends View {
 	 * 
 	 * @param mRingColor
 	 */
-	public void setmRingColor(int mRingColor) {
+	public void setRingColor(int mRingColor) {
 		this.mRingColor = mRingColor;
 	}
 
@@ -354,7 +350,7 @@ public class WaterWaveProgress extends View {
 	 * 
 	 * @param mRingBgColor
 	 */
-	public void setmRingBgColor(int mRingBgColor) {
+	public void setRingBgColor(int mRingBgColor) {
 		this.mRingBgColor = mRingBgColor;
 	}
 
@@ -363,7 +359,7 @@ public class WaterWaveProgress extends View {
 	 * 
 	 * @param mWaterColor
 	 */
-	public void setmWaterColor(int mWaterColor) {
+	public void setWaterColor(int mWaterColor) {
 		this.mWaterColor = mWaterColor;
 	}
 
@@ -412,22 +408,17 @@ public class WaterWaveProgress extends View {
 		this.crestCount = crestCount;
 	}
 
-	/**
-	 * 设置进度条宽度
-	 * 
-	 * @param mRingWidth
-	 */
-	public void setRingWidth(float mRingWidth) {
-		this.mRingWidth = mRingWidth;
-	}
-
+	
 	/**
 	 * 设置水波到进度条之间的距离
 	 * 
 	 * @param mProgress2WaterWidth
 	 */
-	public void setProgress2WaterWidth(float mProgress2WaterWidth) {
+	public void setRing2WaterWidth(float mProgress2WaterWidth) {
 		this.mProgress2WaterWidth = mProgress2WaterWidth;
 	}
-
+	
+	public void setRingWidth(float width) {
+		this.mRingWidth = width;
+	}
 }
