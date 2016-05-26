@@ -57,7 +57,7 @@ public class WaterWaveProgress extends View {
 	private float mWaveSpeed = 0.070F; // 0.020F
 	/** 水的透明度 */
 	private int mWaterAlpha = 255; // 255
-	WaterWaveAttrInit attrInit;
+	
 
 	private MyHandler mHandler = null;
 
@@ -87,6 +87,7 @@ public class WaterWaveProgress extends View {
 
 	private void init(Context context) {
 		mCenterPoint = new Point();
+		/*
 		mRingColor = attrInit.getProgressColor();
 		mRingBgColor = attrInit.getProgressBgColor();
 		mWaterColor = attrInit.getWaterWaveColor();
@@ -98,7 +99,7 @@ public class WaterWaveProgress extends View {
 		mFontSize = attrInit.getFontSize();
 		mTextColor = attrInit.getTextColor();
 		mProgress = attrInit.getProgress();
-		mMaxProgress = attrInit.getMaxProgress();
+		mMaxProgress = attrInit.getMaxProgress();*/
 
 		// 如果手机版本在4.0以上,则开启硬件加速
 		if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH) {
