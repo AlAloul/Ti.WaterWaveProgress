@@ -5,21 +5,17 @@ import java.lang.ref.WeakReference;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
-import android.graphics.Region;
 import android.graphics.Path.Direction;
 import android.graphics.Region.Op;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ProgressBar;
 import org.appcelerator.kroll.common.Log;
 
 /**
@@ -32,7 +28,7 @@ public class WaterWaveProgress extends View {
 	// 水的画笔 // 画圆环的画笔// 进度百分比的画笔
 	private Paint mPaintWater = null, mRingPaint = null, mTextPaint = null;
 
-	// 圆环颜色 // 圆环背景颜色 // 当前进度 //水波颜色 // 水波背景色 //进度条和水波之间的距离 //进度百分比字体大小
+	//Ring ring color // // background color from the current color waves progress // // // background color waves and waves between the progress bar // progress percentage of the font size
 	// //进度百分比字体颜色
 	private int mRingColor, mRingBgColor, mWaterColor, mWaterBgColor,
 			mFontSize, mTextColor;
@@ -41,31 +37,29 @@ public class WaterWaveProgress extends View {
 
 	int mProgress = 10, mMaxProgress = 100;
 
-	// 画布中心点
+	// Canvas center
 	private Point mCenterPoint;
-	// 圆环宽度
+	// Ring width
 	private float mRingWidth, mRing2WaterWidth;
-	// 是否显示进度条 //是否显示进度百分比
-	private boolean mShowProgress = false, mShowNumerical = true;
+	// Whether to display the progress bar // whether to display the percentage of progress
+	private boolean mShowRing = false, mShowNumerical = true;
 
-	/** 产生波浪效果的因子 */
+	/** Factors generating waves effect */
 	private long mWaveFactor = 0L;
-	/** 正在执行波浪动画 */
-	private boolean isWaving = false;
-	/** 振幅 */
+	/** It is implemented wave animation */
+	private boolean isWaving = true;
+	/** amplitude */
 	private float mAmplitude = 30.0F; // 20F
-	/** 波浪的速度 */
+	/** Wave velocity */
 	private float mWaveSpeed = 0.070F; // 0.020F
-	/** 水的透明度 */
+	/** Transparency of the water */
 	private int mWaterAlpha = 255; // 255
 
 	private MyHandler mHandler = null;
 
 	private static class MyHandler extends Handler {
 		private WeakReference<WaterWaveProgress> mWeakRef = null;
-
 		private int refreshPeriod = 100;
-
 		public MyHandler(WaterWaveProgress host) {
 			mWeakRef = new WeakReference<WaterWaveProgress>(host);
 		}
@@ -83,13 +77,13 @@ public class WaterWaveProgress extends View {
 	/* CONSTRUCTOR */
 	public WaterWaveProgress(Context context) {
 		super(context);
-		initView(context);
+		mCenterPoint = new Point();
+		
 	}
 
-	private void initView(Context context) {
-		mCenterPoint = new Point();
-
-		// 如果手机版本在4.0以上,则开启硬件加速
+	public void initView(Context context) {
+		
+			// 如果手机版本在4.0以上,则开启硬件加速
 		if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH) {
 			setLayerType(View.LAYER_TYPE_HARDWARE, null);
 			// setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -104,7 +98,7 @@ public class WaterWaveProgress extends View {
 		mPaintWater.setStrokeWidth(1.0F);
 		mPaintWater.setColor(mWaterColor);
 		// mPaintWater.setColor(getResources().getColor(mWaterColor));
-		mPaintWater.setAlpha(mWaterAlpha);
+		//mPaintWater.setAlpha(mWaterAlpha);
 
 		mTextPaint = new Paint();
 		mTextPaint.setAntiAlias(true);
@@ -113,9 +107,6 @@ public class WaterWaveProgress extends View {
 		mTextPaint.setTextSize(mFontSize);
 
 		mHandler = new MyHandler(this);
-		
-		Log.d(LCAT, "Progress: " + mProgress + " / " + mMaxProgress);
-
 	}
 
 	public void animateWave() {
@@ -129,15 +120,18 @@ public class WaterWaveProgress extends View {
 	@SuppressLint({ "DrawAllocation", "NewApi" })
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		// 获取整个View（容器）的宽、高
+		Log.d(LCAT, "========================≠≠≠≠≠≠≠≠≠≠≠≠≠≠≠");
+		// Get the entire View (container) width, height
 		int width = getWidth();
 		int height = getHeight();
 		width = height = (width < height) ? width : height;
 		mAmplitude = width / 20f;
-
+		Log.d(LCAT, "width height amp " + width + "   " + height + "  "
+				+ mAmplitude);
 		mCenterPoint.x = width / 2;
 		mCenterPoint.y = height / 2;
-		{ // 重新设置进度条的宽度和水波与进度条的距离,,至于为什么写在这,我脑袋抽了可以不
+		{ // Reset the progress bar width and distance between the waves and the
+			// progress bar,, as to why write this, I can not smoke a head
 			mRingWidth = mRingWidth == 0 ? width / 20 : mRingWidth;
 			mRing2WaterWidth = mRing2WaterWidth == 0 ? mRingWidth * 0.6f
 					: mRing2WaterWidth;
@@ -149,6 +143,8 @@ public class WaterWaveProgress extends View {
 				setLayerType(View.LAYER_TYPE_HARDWARE, null);
 			}
 		}
+		Log.d(LCAT, " mFontSize=" + mFontSize);
+		Log.d(LCAT, "");
 
 		RectF oval = new RectF();
 		oval.left = mRingWidth / 2;
@@ -166,84 +162,87 @@ public class WaterWaveProgress extends View {
 			return;
 		}
 
-		// 如果没有执行波浪动画，或者也没有指定容器宽高，就画个简单的矩形
+		// If no wave animation, or you do not specify the width and height of
+		// the container, to draw a simple rectangle
 		if ((width == 0) || (height == 0) || isInEditMode()) {
 			canvas.drawCircle(mCenterPoint.x, mCenterPoint.y, width / 2
 					- mRing2WaterWidth - mRingWidth, mPaintWater);
+			Log.d(LCAT, "no animation");
 			return;
 		}
 
-		// 水与边框的距离
-		float waterPadding = mShowProgress ? mRingWidth + mRing2WaterWidth
-				: 0;
-		// 水最高处
-		int waterHeightCount = mShowProgress ? (int) (height - waterPadding * 2)
+		// From the water and the border
+		float waterPadding = mShowRing ? mRingWidth + mRing2WaterWidth : 0;
+		// Water highest point
+		int waterHeightCount = mShowRing ? (int) (height - waterPadding * 2)
 				: height;
 
-		// 重新生成波浪的形状
+		// Rebuild the wave shape
 		mWaveFactor++;
 		if (mWaveFactor >= Integer.MAX_VALUE) {
 			mWaveFactor = 0L;
 		}
 
-		// 画进度条背景
+		// Videos progress bar background
 		mRingPaint.setColor(mRingBgColor);
 		// canvas.drawArc(oval, -90, 360, false, mRingPaint);
-		// //和下面效果一样,只不过这个是画个360度的弧,下面是画圆环
+		// //And following the same effect, but this is to draw an arc of 360
+		// degrees, the following is drawing ring
 		canvas.drawCircle(width / 2, width / 2, waterHeightCount / 2
 				+ waterPadding - mRingWidth / 2, mRingPaint);
 		mRingPaint.setColor(mRingColor);
-		// 100为 总进度
+		// 100 is the total schedule
 		canvas.drawArc(oval, -90, (mProgress * 1f) / mMaxProgress * 360f,
 				false, mRingPaint);
 
-		// 计算出水的高度
+		// Calculate the height of the water
 		float waterHeight = waterHeightCount
 				* (1 - (mProgress * 1f) / mMaxProgress) + waterPadding;
 		int staticHeight = (int) (waterHeight + mAmplitude);
 		Path mPath = new Path();
 		mPath.reset();
-		if (mShowProgress) {
+		if (mShowRing) {
 			mPath.addCircle(width / 2, width / 2, waterHeightCount / 2,
 					Direction.CCW);
 		} else {
 			mPath.addCircle(width / 2, width / 2, waterHeightCount / 2,
 					Direction.CCW);
 		}
-		// canvas添加限制,让接下来的绘制都在园内
+		// canvas Add restrictions, so the next drawing in the park
 		canvas.clipPath(mPath, Op.REPLACE);
 		Paint bgPaint = new Paint();
 		bgPaint.setColor(mWaterBgColor);
-		// 绘制背景
+		// Draw background
 		canvas.drawRect(waterPadding, waterPadding, waterHeightCount
 				+ waterPadding, waterHeightCount + waterPadding, bgPaint);
-		// 绘制静止的水
+		// Draw and still water
 		canvas.drawRect(waterPadding, staticHeight, waterHeightCount
 				+ waterPadding, waterHeightCount + waterPadding, mPaintWater);
 
-		// 待绘制的波浪线的x坐标
+		// x coordinate to be drawn wavy lines
 		int xToBeDrawed = (int) waterPadding;
 		int waveHeight = (int) (waterHeight - mAmplitude
 				* Math.sin(Math.PI
 						* (2.0F * (xToBeDrawed + (mWaveFactor * width)
 								* mWaveSpeed)) / width));
-		// 波浪线新的高度
+		// Height wavy lines
 		int newWaveHeight = waveHeight;
 		while (true) {
 			if (xToBeDrawed >= waterHeightCount + waterPadding) {
 				break;
 			}
-			// 根据当前x值计算波浪线新的高度
+			// Calculate the height of the wavy line based on the current value
+			// of x
 			newWaveHeight = (int) (waterHeight - mAmplitude
 					* Math.sin(Math.PI
 							* (crestCount * (xToBeDrawed + (mWaveFactor * waterHeightCount)
 									* mWaveSpeed)) / waterHeightCount));
 
-			// 先画出梯形的顶边
+			// To draw up the top edge of the trapezoid
 			canvas.drawLine(xToBeDrawed, waveHeight, xToBeDrawed + 1,
 					newWaveHeight, mPaintWater);
 
-			// 画出动态变化的柱子部分
+			// Draw dynamic part of the column
 			canvas.drawLine(xToBeDrawed, newWaveHeight, xToBeDrawed + 1,
 					staticHeight, mPaintWater);
 			xToBeDrawed++;
@@ -253,6 +252,7 @@ public class WaterWaveProgress extends View {
 			String progressTxt = String.format("%.0f", (mProgress * 1f)
 					/ mMaxProgress * 100f)
 					+ "%";
+			Log.d(LCAT, "progressTxt=" + progressTxt);
 			float mTxtWidth = mTextPaint.measureText(progressTxt, 0,
 					progressTxt.length());
 			canvas.drawText(progressTxt, mCenterPoint.x - mTxtWidth / 2,
@@ -275,10 +275,9 @@ public class WaterWaveProgress extends View {
 
 	public void setWaterAlpha(float alpha) {
 		mWaterAlpha = (int) (255.0F * alpha);
-		mPaintWater.setAlpha(mWaterAlpha);
+		//mPaintWater.setAlpha(mWaterAlpha);
 	}
 
-	
 	public void setProgress(int progress) {
 		progress = progress > 100 ? 100 : progress < 0 ? 0 : progress;
 		mProgress = progress;
@@ -293,12 +292,12 @@ public class WaterWaveProgress extends View {
 		mWaveSpeed = speed;
 	}
 
-	public void setShowRing(boolean b) {
-		mShowProgress = b;
+	public void setShowRing(boolean arg) {
+		mShowRing = arg;
 	}
 
-	public void setShowNumerical(boolean b) {
-		mShowNumerical = b;
+	public void setShowNumerical(boolean arg) {
+		mShowNumerical = arg;
 	}
 
 	public void setRingColor(int mRingColor) {

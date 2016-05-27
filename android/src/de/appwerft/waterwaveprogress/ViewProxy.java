@@ -9,8 +9,10 @@
 package de.appwerft.waterwaveprogress;
 
 import org.appcelerator.kroll.KrollDict;
+
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
+import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.titanium.util.TiConvert;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.view.TiUIView;
@@ -19,10 +21,19 @@ import org.appcelerator.titanium.TiApplication;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.app.Activity;
+
+import android.content.Context;
 import cn.modificator.waterwave_progress.*;
+
+
+import org.appcelerator.kroll.common.TiMessenger;
+import android.os.Handler;
+import org.appcelerator.kroll.common.AsyncResult;
+import android.os.Message;
 
 @Kroll.proxy(creatableInModule = WaterwaveprogressModule.class)
 public class ViewProxy extends TiViewProxy {
+	private static final int MSG_SET_PROGRESS = 70000;
 	// Standard Debugging variables
 	TiApplication appContext;
 	Activity activity;
@@ -114,17 +125,26 @@ public class ViewProxy extends TiViewProxy {
 		Log.d(LCAT, "ViewProxy::handleCreationDict finished ");
 	}
 
+	/*
+	 * The progressView class extends the TiUIView class. The TiUIView can be
+	 * added to other Titanium views and windows, which makes it the perfect
+	 * place for a UIView to be added so that it can be displayed in a Titanium
+	 * app. This class creates the native view to display. The class implements
+	 * the the constructor and one method of the TiUIView class, and custom
+	 * setter methods:
+	 */
 	public class progressView extends TiUIView {
 		public progressView(TiViewProxy proxy) {
 			super(proxy);
+			Context context  = TiApplication
+					.getInstance().getApplicationContext();
 			Log.d(LCAT, "progressView started");
 			LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT,
 					LayoutParams.WRAP_CONTENT);
 			LinearLayout container = new LinearLayout(proxy.getActivity());
 			container.setLayoutParams(lp);
 
-			mWaterWaveProgressView = new WaterWaveProgress(TiApplication
-					.getInstance().getApplicationContext());
+			mWaterWaveProgressView = new WaterWaveProgress(context);
 
 			mWaterWaveProgressView.setAmplitude(mAmplitude);
 			mWaterWaveProgressView.setCrestCount(mCrestCount);
@@ -145,6 +165,8 @@ public class ViewProxy extends TiViewProxy {
 			mWaterWaveProgressView.setWaveFactor(mWaveFactor);
 			mWaterWaveProgressView.setWaveSpeed(mWaveSpeed);
 			mWaterWaveProgressView.setWaterAlpha(mWaterAlpha);
+			Log.d(LCAT, "All attributes for View are set");
+			mWaterWaveProgressView.initView(context);
 			container.addView(mWaterWaveProgressView);
 			setNativeView(container);
 			if (proxy.hasListeners("viewCreated")) {
@@ -152,6 +174,11 @@ public class ViewProxy extends TiViewProxy {
 			}
 		}
 
+		/*
+		 * This method allows the application to processes properties passed in
+		 * when the view is created. In this example, the application intercepts
+		 * the color property to set the native view's background color.
+		 */
 		@Override
 		public void processProperties(KrollDict d) {
 			Log.d(LCAT, "processProperties triggered");
@@ -160,6 +187,35 @@ public class ViewProxy extends TiViewProxy {
 	}
 
 	/* I N T E R F A C E S to Titanium */
+
+	@Kroll.setProperty
+	@Kroll.method
+	public void setProgress(final int arg) {
+		if (mWaterWaveProgressView != null)
+			if (!TiApplication.isUIThread()) {
+				// If we are not on the UI thread, need to use a message to set
+				// the progress
+				TiMessenger.sendBlockingMainMessage(new Handler(TiMessenger
+						.getMainMessenger().getLooper(),
+						new Handler.Callback() {
+							public boolean handleMessage(Message msg) {
+								switch (msg.what) {
+								case MSG_SET_PROGRESS: {
+									AsyncResult result = (AsyncResult) msg.obj;
+									result.setResult(null);
+									mWaterWaveProgressView
+											.setProgress(TiConvert.toInt(arg));
+									return true;
+								}
+								}
+								return false;
+							}
+						}).obtainMessage(MSG_SET_PROGRESS), arg);
+			} else {
+				mWaterWaveProgressView.setProgress(TiConvert.toInt(arg));
+			}
+	}
+
 	@Kroll.method
 	public void hideNumerical() {
 		if (mWaterWaveProgressView != null)
@@ -191,35 +247,33 @@ public class ViewProxy extends TiViewProxy {
 	}
 
 	@Kroll.method
-	public void setProgress(int arg) {
-		Log.d(LCAT, "mProgress=" + arg);
+	public void setRingWidth(float arg) {
 		if (mWaterWaveProgressView != null)
-			mWaterWaveProgressView.setProgress(TiConvert.toInt(arg));
+			mWaterWaveProgressView.setRingWidth(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
-	public void setRingWidth(float arg) {if (mWaterWaveProgressView != null)
-		mWaterWaveProgressView.setRingWidth(TiConvert.toFloat(arg));
+	public void setCrestCount(float arg) {
+		if (mWaterWaveProgressView != null)
+			mWaterWaveProgressView.setCrestCount(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
-	public void setCrestCount(float arg) {if (mWaterWaveProgressView != null)
-		mWaterWaveProgressView.setCrestCount(TiConvert.toFloat(arg));
+	public void setAmplitude(float arg) {
+		if (mWaterWaveProgressView != null)
+			mWaterWaveProgressView.setAmplitude(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
-	public void setAmplitude(float arg) {if (mWaterWaveProgressView != null)
-		mWaterWaveProgressView.setAmplitude(TiConvert.toFloat(arg));
+	public void setWaveSpeed(float arg) {
+		if (mWaterWaveProgressView != null)
+			mWaterWaveProgressView.setWaveSpeed(TiConvert.toFloat(arg));
 	}
 
 	@Kroll.method
-	public void setWaveSpeed(float arg) {if (mWaterWaveProgressView != null)
-		mWaterWaveProgressView.setWaveSpeed(TiConvert.toFloat(arg));
-	}
-
-	@Kroll.method
-	public void setWaterAlpha(float arg) {if (mWaterWaveProgressView != null)
-		mWaterWaveProgressView.setWaterAlpha(TiConvert.toFloat(arg));
+	public void setWaterAlpha(float arg) {
+		if (mWaterWaveProgressView != null)
+			mWaterWaveProgressView.setWaterAlpha(TiConvert.toFloat(arg));
 	}
 
 }
