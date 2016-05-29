@@ -1,39 +1,40 @@
-# waterwaveprogress Module
+Ti.WaterWaveProgress
+====================
 
-## Description
+This is a Titanium module that exposes the library of [Modificator](https://github.com/Modificator/water-wave-progress).com
 
-TODO: Enter your module description here
+![](https://raw.githubusercontent.com/AppWerft/Ti.WaterWaveProgress/master/documentation/waterprogress.gif)
 
-## Accessing the waterwaveprogress Module
+Usage
+=====
 
-To access this module from JavaScript, you would do the following:
+~~~
+var progress = 0;
+var progressView = require('ti.appwerft.waterwaveprogress').createView({
+    maxProgress : 100,
+    ringWidth:4,
+    waterColor: '#00ff00',
+    waterBgColor: '#00aa00',
+    ring2WaterWidth : 10.1,
+    fontSize : 22,
+    showRing : true,
+    showNumerical : true,
+    crestCount : 2.2,
+    amplitude : 0.4,
+    α : 0.7
+});
 
-    var waterwaveprogress = require("de.appwerft.waterwaveprogress");
 
-The waterwaveprogress variable is a reference to the Module object.
+var setprogressFn = function() {
+    if (progress<100 && progressView) {
+        progressView.setProgress(progress);
+        progress++;
+        setTimeout(setProgressFn,20);
+    }
+};
 
-## Reference
+setprogressFn();
+~~~
 
-TODO: If your module has an API, you should document
-the reference here.
+More parameters methods you can find in sources.
 
-### waterwaveprogress.function
-
-TODO: This is an example of a module function.
-
-### waterwaveprogress.property
-
-TODO: This is an example of a module property.
-
-## Usage
-
-TODO: Enter your usage example here
-
-## Author
-
-TODO: Enter your author name, email and other contact
-details you want to share here.
-
-## License
-
-TODO: Enter your license/legal information here.
